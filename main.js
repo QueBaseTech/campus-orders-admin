@@ -20,7 +20,6 @@ firebase.database().ref().child('users').on('value', snap => {
     for(let user in users) {
         registerUsers.push(users[user]);
     }
-    console.log(registerUsers);
     populateUsers()
 });
 
@@ -42,6 +41,7 @@ firebase.database().ref().child('orders').on('value', snap => {
         COrders.push(orders[order]);
     }
     populateOrders()
+    $.loadingBlockHide// Hide loading overlay
 });
 
 
@@ -49,14 +49,20 @@ function populateUsers() {
     let tbody = $("#tbody-users");
     tbody.text("");
     for(let i=totalUsers-1; i>=0; i--){
-        console.log(registerUsers[i], i)
         let user = registerUsers[i];
+        let status = "";
+        if (user.isBuyer) {
+            status = '<button class="btn btn-primary" onclick="switchProfile(\''+user.id+'\', '+false+')\">Seller</button>';
+        } else {
+            status = '<button class="btn btn-success" onclick="switchProfile(\''+user.id+'\', '+true+')\">Buyer</button>';
+        }
         let row = "<tr>"+
         "<th scope='row'>"+(1+ parseInt(i))+"</th>"+
         "<td>"+user.name+"</td>"+
         "<td>"+user.phoneNumber+"</td>"+
         "<td>"+user.location+"</td>"+
         "<td>"+user.email+"</td>"+
+        "<td>"+status+"</td>"+
         "</tr>";
         tbody.append(row)
     }
@@ -95,4 +101,9 @@ function populateItems() {
         "</tr>";
         tbody.append(row)
     }
+}
+
+function switchProfile(id, status) {
+    console.log(id, status);
+    firebase.database().ref().child('users').child(id).child("isBuyer").setValue(status);
 }
