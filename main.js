@@ -41,7 +41,7 @@ firebase.database().ref().child('orders').on('value', snap => {
         COrders.push(orders[order]);
     }
     populateOrders()
-    $.loadingBlockHide// Hide loading overlay
+    $.loadingBlockHide()// Hide loading overlay
 });
 
 
